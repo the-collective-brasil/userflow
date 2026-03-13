@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Collective — Teacher User Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --warm-white: #FFFEFB;
+    --ink: #1C1917;
+    --ink-light: #44403C;
+    --ink-muted: #78716C;
+    --green: #0A7E6E;
+    --green-light: #E8F5F2;
+    --green-mid: #B8DDD7;
+    --gold: #C9963A;
+    --gold-mid: #E8D5A3;
+    --border: #E7E2DA;
+    --teal-fill: #E8F5F2;
+    --teal-stroke: #B8DDD7;
+    --teal-text: #0A7E6E;
+    --purple-fill: #F5F3FF;
+    --purple-stroke: #DDD6FE;
+    --purple-text: #5B21B6;
+    --gray-fill: #F5F4F1;
+    --gray-stroke: #D6D3CD;
+    --gray-text: #44403C;
+    --amber-fill: #FDF3E3;
+    --amber-stroke: #E8D5A3;
+    --amber-text: #92400E;
+    --red-fill: #FEF2F2;
+    --red-stroke: #FECACA;
+    --red-text: #991B1B;
+    --family-fill: #F0FDF4;
+    --family-stroke: #86EFAC;
+    --family-text: #166534;
+    --outcome-bg: #0A7E6E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── TOP NAV ── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 14px 0;
+    border-right: 1px solid var(--border);
+    margin-right: 20px;
+    flex-shrink: 0;
+  }
+
+  .topbar-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #fff;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+  }
+
+  .topbar-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    line-height: 1.4;
+  }
+
+  .topbar-title strong {
+    display: block;
+    color: var(--ink);
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .tabs {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+    gap: 3px;
+    position: relative;
+  }
+
+  .tab:hover { background: var(--cream); }
+
+  .tab.active { border-bottom-color: var(--green); }
+
+  .tab-icon {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .tab-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    transition: color 0.18s;
+  }
+
+  .tab.active .tab-label { color: var(--green); font-weight: 500; }
+
+  .tab-badge {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 8px;
+    font-family: 'DM Mono', monospace;
+    background: var(--gold-mid);
+    color: var(--amber-text);
+    padding: 1px 5px;
+    border-radius: 8px;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── PAGE WRAPPER ── */
+  .page { display: none; padding: 40px 40px 80px; }
+  .page.active { display: block; }
+
+  /* ── HEADER ── */
+  .header { max-width: 860px; margin: 0 auto 36px; }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.25;
+    margin-bottom: 5px;
+  }
+
+  h2 em { font-style: italic; color: var(--green); }
+
+  .subtitle { font-size: 13px; color: var(--ink-muted); font-weight: 300; }
+
+  /* ── LEGEND ── */
+  .legend {
+    max-width: 860px; margin: 0 auto 32px;
+    display: flex; flex-wrap: wrap; gap: 6px 20px;
+    padding: 10px 16px; background: var(--warm-white);
+    border: 1px solid var(--border); border-radius: 8px; align-items: center;
+  }
+  .legend-title { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted); margin-right: 6px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-light); }
+  .leg-dot { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
+  .leg-teal   { background: var(--teal-fill);   border: 1.5px solid var(--teal-stroke); }
+  .leg-purple { background: var(--purple-fill);  border: 1.5px solid var(--purple-stroke); }
+  .leg-amber  { background: var(--amber-fill);   border: 1.5px solid var(--amber-stroke); }
+  .leg-family { background: var(--family-fill);  border: 1.5px solid var(--family-stroke); }
+  .leg-gray   { background: var(--gray-fill);    border: 1.5px solid var(--gray-stroke); }
+  .leg-red    { background: var(--red-fill);     border: 1.5px solid var(--red-stroke); }
+  .leg-green  { background: var(--outcome-bg);   border: 1.5px solid var(--green); border-radius: 3px; }
+  .leg-diamond { width: 11px; height: 11px; background: #EFF6FF; border: 1.5px solid #BFDBFE; transform: rotate(45deg); border-radius: 2px; }
+
+  /* ── FLOW ── */
+  .flow { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 0; }
+
+  .phase-header { align-self: stretch; display: flex; align-items: center; gap: 12px; margin: 28px 0 16px; }
+  .phase-header:first-child { margin-top: 0; }
+  .phase-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-muted); white-space: nowrap; }
+  .phase-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ── NODES ── */
+  .node { width: 100%; max-width: 460px; padding: 12px 18px; border-radius: 8px; }
+  .node-title { font-size: 12.5px; font-weight: 500; line-height: 1.4; margin-bottom: 2px; }
+  .node-sub { font-size: 11px; font-weight: 300; line-height: 1.5; opacity: 0.78; }
+
+  .node-teal   { background: var(--teal-fill);   border: 1.5px solid var(--teal-stroke); }
+  .node-teal .node-title, .node-teal .node-sub { color: var(--teal-text); }
+  .node-purple { background: var(--purple-fill);  border: 1.5px solid var(--purple-stroke); }
+  .node-purple .node-title, .node-purple .node-sub { color: var(--purple-text); }
+  .node-amber  { background: var(--amber-fill);   border: 1.5px solid var(--amber-stroke); }
+  .node-amber .node-title, .node-amber .node-sub { color: var(--amber-text); }
+  .node-gray   { background: var(--gray-fill);    border: 1.5px solid var(--gray-stroke); }
+  .node-gray .node-title, .node-gray .node-sub { color: var(--gray-text); }
+  .node-red    { background: var(--red-fill);     border: 1.5px solid var(--red-stroke); }
+  .node-red .node-title, .node-red .node-sub { color: var(--red-text); }
+  .node-family { background: var(--family-fill);  border: 1.5px solid var(--family-stroke); }
+  .node-family .node-title, .node-family .node-sub { color: var(--family-text); }
+  .node-outcome { background: var(--outcome-bg); border: none; border-radius: 8px; }
+  .node-outcome .node-title { color: #fff; font-size: 13px; }
+  .node-outcome .node-sub   { color: rgba(255,255,255,0.75); }
+
+  /* ── APPS SCRIPT GROUP ── */
+  .as-group { width: 100%; max-width: 460px; border: 1.5px solid var(--teal-stroke); border-radius: 10px; background: var(--warm-white); overflow: hidden; }
+  .as-header { background: var(--teal-fill); padding: 8px 16px; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal-text); }
+  .as-step { padding: 9px 16px; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: flex-start; }
+  .as-step:first-of-type { border-top: none; }
+  .as-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--teal-text); opacity: 0.6; flex-shrink: 0; width: 18px; margin-top: 2px; }
+  .as-title { font-size: 12px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+  .as-sub   { font-size: 11px; font-weight: 300; color: var(--ink-muted); line-height: 1.5; }
+
+  /* ── DIE GROUP ── */
+  .die-group { width: 100%; max-width: 460px; border: 1.5px solid var(--amber-stroke); border-radius: 10px; background: var(--warm-white); overflow: hidden; }
+  .die-header { background: var(--amber-fill); padding: 8px 16px; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--amber-text); }
+  .die-step { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: flex-start; }
+  .die-step:first-of-type { border-top: none; }
+  .die-letter { font-family: 'Playfair Display', serif; font-size: 18px; font-style: italic; color: var(--gold); line-height: 1; flex-shrink: 0; width: 18px; margin-top: 1px; }
+  .die-title { font-size: 12px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+  .die-sub   { font-size: 11px; font-weight: 300; color: var(--ink-muted); line-height: 1.5; }
+
+  /* ── CONNECTORS ── */
+  .connector { width: 1px; height: 24px; background: var(--border); position: relative; flex-shrink: 0; }
+  .connector::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--border); }
+  .connector-green  { background: var(--green-mid); }
+  .connector-green::after  { border-top-color: var(--green-mid); }
+  .connector-amber  { background: var(--gold-mid); }
+  .connector-amber::after  { border-top-color: var(--gold-mid); }
+  .connector-purple { background: var(--purple-stroke); }
+  .connector-purple::after { border-top-color: var(--purple-stroke); }
+  .connector-red    { background: var(--red-stroke); }
+  .connector-red::after    { border-top-color: var(--red-stroke); }
+  .connector-family { background: var(--family-stroke); }
+  .connector-family::after { border-top-color: var(--family-stroke); }
+
+  /* ── ANNOTATED ROW ── */
+  .annotated { width: 100%; max-width: 860px; display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: center; }
+  .annotated-node-col { display: flex; flex-direction: column; align-items: center; }
+
+  .annotation {
+    padding: 10px 14px; background: var(--warm-white); border: 1px solid var(--border);
+    border-left: 3px solid var(--green-mid); border-radius: 0 6px 6px 0;
+    font-size: 11px; color: var(--ink-muted); line-height: 1.6;
+  }
+  .annotation.amber-left  { border-left-color: var(--gold-mid); }
+  .annotation.purple-left { border-left-color: var(--purple-stroke); }
+  .annotation.red-left    { border-left-color: var(--red-stroke); }
+  .annotation.family-left { border-left-color: var(--family-stroke); }
+
+  .annotation strong {
+    font-weight: 500; color: var(--ink-light); display: block; margin-bottom: 2px;
+    font-size: 10px; font-family: 'DM Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+
+  /* ── DECISIONS ── */
+  .decision-wrap { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 460px; }
+  .branches { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; max-width: 460px; }
+  .branch { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .branch-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; padding: 4px 0; }
+  .branch-label.yes   { color: var(--green); }
+  .branch-label.no    { color: #B91C1C; }
+  .branch-label.skip  { color: var(--ink-muted); }
+  .branch-label.edit  { color: var(--gold); }
+  .branch-label.msg   { color: var(--purple-text); }
+
+  /* ── GATE ── */
+  .gate {
+    width: 100%; max-width: 460px; padding: 12px 18px;
+    background: var(--warm-white); border: 1.5px dashed var(--gold);
+    border-radius: 8px; text-align: center;
+  }
+  .gate-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+  .gate-text { font-size: 12px; color: var(--ink-light); font-weight: 300; }
+
+  /* ── SECTION RULE ── */
+  .section-rule { width: 100%; max-width: 860px; height: 1px; background: var(--border); margin: 28px 0 24px; position: relative; }
+  .section-rule-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--cream); padding: 0 12px; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); white-space: nowrap; }
+
+  /* ── MERGE / FOOTER ── */
+  .merge-note {
+    font-family: 'DM Mono', monospace; font-size: 9px; color: var(--green);
+    letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 12px;
+    border: 1px solid var(--green-mid); border-radius: 20px; background: var(--green-light); margin: 4px 0;
+  }
+  .continue-badge {
+    margin-top: 20px; padding: 7px 16px; background: var(--warm-white);
+    border: 1px dashed var(--border); border-radius: 20px;
+    font-family: 'DM Mono', monospace; font-size: 9px; color: var(--ink-muted); letter-spacing: 0.1em; text-align: center;
+  }
+  .footer { max-width: 860px; margin: 40px auto 0; display: flex; justify-content: space-between; align-items: center; padding-top: 18px; border-top: 1px solid var(--border); }
+  .footer span { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--ink-muted); }
+
+  /* ── TIMELINE STRIP ── */
+  .timeline-row { width: 100%; max-width: 860px; display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 8px 0; }
+  .tl-node { padding: 10px 14px; border-radius: 8px; text-align: center; }
+  .tl-day { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 5px; }
+  .tl-title { font-size: 11.5px; font-weight: 500; line-height: 1.4; margin-bottom: 2px; }
+  .tl-sub { font-size: 10.5px; font-weight: 300; line-height: 1.5; opacity: 0.75; }
+  .t-d1 { background: var(--gray-fill); border: 1.5px solid var(--gray-stroke); }
+  .t-d1 .tl-day,.t-d1 .tl-title,.t-d1 .tl-sub { color: var(--gray-text); }
+  .t-d2 { background: var(--amber-fill); border: 1.5px solid var(--amber-stroke); }
+  .t-d2 .tl-day,.t-d2 .tl-title,.t-d2 .tl-sub { color: var(--amber-text); }
+  .t-d3 { background: var(--red-fill); border: 1.5px solid var(--red-stroke); }
+  .t-d3 .tl-day,.t-d3 .tl-title,.t-d3 .tl-sub { color: var(--red-text); }
+
+  /* ── OUTCOMES GRID ── */
+  .outcomes-grid { width: 100%; max-width: 860px; display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+
+  /* ── WA BUBBLES (dormant path) ── */
+  .wa-wrap { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 6px; }
+  .wa-bubble { padding: 9px 13px 7px; border-radius: 10px; font-size: 11.5px; line-height: 1.55; font-weight: 300; max-width: 88%; white-space: pre-line; }
+  .wa-system { background: #fff; border: 1px solid #E8E8E8; align-self: flex-start; border-radius: 2px 10px 10px 10px; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+  .wa-time { font-size: 9px; color: var(--ink-muted); text-align: right; margin-top: 1px; font-family: 'DM Mono', monospace; }
+  .wa-day { text-align: center; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); background: var(--cream); padding: 2px 10px; border-radius: 10px; border: 1px solid var(--border); align-self: center; margin: 4px 0; }
+  .wa-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; align-self: flex-start; }
+  .wa-btn { padding: 5px 14px; border: 1.5px solid #25D366; border-radius: 20px; font-size: 11px; color: #128C7E; font-weight: 500; background: #fff; font-family: 'DM Sans', sans-serif; }
+  .wa-voice { display: flex; align-items: center; gap: 8px; background: #DCF8C6; padding: 8px 12px; border-radius: 10px 2px 10px 10px; align-self: flex-end; max-width: 260px; }
+  .wa-vt { height: 3px; background: #ccc; border-radius: 2px; margin-bottom: 3px; }
+  .wa-vf { width: 45%; height: 100%; background: #128C7E; border-radius: 2px; }
+  .wa-vs { font-size: 10px; color: #128C7E; font-family: 'DM Mono', monospace; }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">C</div>
+    <div class="topbar-title">
+      <strong>The Collective</strong>
+      Teacher User Flow
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('level1')">
+      <div class="tab-icon">📱</div>
+      <div class="tab-label">Level 1</div>
+    </div>
+    <div class="tab" onclick="showTab('level2')">
+      <div class="tab-icon">🧠</div>
+      <div class="tab-label">Level 2</div>
+      <div class="tab-badge">unlock</div>
+    </div>
+    <div class="tab" onclick="showTab('weekly')">
+      <div class="tab-icon">📊</div>
+      <div class="tab-label">Weekly Wrap</div>
+    </div>
+    <div class="tab" onclick="showTab('montage')">
+      <div class="tab-icon">🎬</div>
+      <div class="tab-label">Family Montage</div>
+      <div class="tab-badge">unlock</div>
+    </div>
+    <div class="tab" onclick="showTab('dormant')">
+      <div class="tab-icon">⚠️</div>
+      <div class="tab-label">Dormant</div>
+    </div>
+    <div class="tab" onclick="showTab('reports')">
+      <div class="tab-icon">📄</div>
+      <div class="tab-label">Reports</div>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ════════════════════════════════════════════════
+     TAB 1 — LEVEL 1
+════════════════════════════════════════════════ -->
+<div id="tab-level1" class="page active">
+  <div class="header">
+    <div class="eyebrow">The Collective · MVP v2 · Daily Loop</div>
+    <h2>Level 1 — <em>Morning prompt to logging</em></h2>
+    <div class="subtitle">Make.com → Apps Script → WhatsApp → Teacher → Media upload → Learning log</div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-title">Key —</span>
+    <div class="legend-item"><div class="leg-dot leg-teal"></div> System / API</div>
+    <div class="legend-item"><div class="leg-dot leg-purple"></div> Teacher-facing</div>
+    <div class="legend-item"><div class="leg-dot leg-gray"></div> State</div>
+    <div class="legend-item"><div class="leg-dot leg-green"></div> Outcome</div>
+    <div class="legend-item"><div class="leg-diamond"></div> Decision</div>
+  </div>
+
+  <div class="flow">
+
+    <div class="phase-header">
+      <span class="phase-label">Phase 1 — Morning prompt</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-gray">
+          <div class="node-title">Make.com fires at 06:00 BRT</div>
+          <div class="node-sub">Scenario S1 · runs every school day</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Trigger</strong>Scheduled Make.com scenario. One run per school day — not teacher-initiated.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">API call: next_prompt_time</div>
+          <div class="node-sub">doGet?teacher_id=X&amp;request=next_prompt_time</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Apps Script</strong>Reads timetable from group_profile_[teacher_id] tab. Finds next class. Subtracts prompt window (default 15 min). Returns UTC timestamp.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">Returns UTC timestamp + top 3 coverage gaps</div>
+          <div class="node-sub">Live scan of learning_log · not written to sheet</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Coverage gaps</strong>Calculated on demand — student × lesson stage combos with lowest observation counts. Never persisted to the sheet.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-purple">
+          <div class="node-title">Teacher receives WhatsApp prompt</div>
+          <div class="node-sub">Suggested child + lesson stage · 15 min before class</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Teacher-facing</strong>Personalised: suggested student from coverage gap + lesson stage. No login required. Two buttons: Accept / Not today.</div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="decision-wrap">
+          <svg width="220" height="70" viewBox="0 0 220 70" style="overflow:visible;">
+            <polygon points="110,4 216,35 110,66 4,35" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.5"/>
+            <text x="110" y="31" text-anchor="middle" font-family="'DM Sans'" font-size="11" font-weight="500" fill="#1D4ED8">Accept suggestion</text>
+            <text x="110" y="47" text-anchor="middle" font-family="'DM Sans'" font-size="11" font-weight="500" fill="#1D4ED8">or Not today?</text>
+          </svg>
+          <div class="branches">
+            <div class="branch">
+              <div class="branch-label no">Not today →</div>
+              <div class="connector"></div>
+              <div class="node node-gray" style="max-width:200px;">
+                <div class="node-title">System stays silent</div>
+                <div class="node-sub">No further prompts until next scheduled class</div>
+              </div>
+            </div>
+            <div class="branch">
+              <div class="branch-label yes">Accept →</div>
+              <div class="connector connector-green"></div>
+              <div class="node node-purple" style="max-width:200px;">
+                <div class="node-title">Teacher goes to teach</div>
+                <div class="node-sub">Can ask for another suggestion or pick manually</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Decision</strong>Not today: loop ends, no further prompts until next class. Teacher can also request another suggestion or name their own.</div>
+    </div>
+
+    <div class="phase-header" style="margin-top:28px;">
+      <span class="phase-label">Phase 2 — Capture</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-gray">
+          <div class="node-title">System silent during lesson</div>
+          <div class="node-sub">No prompts · no interruptions · teacher is free</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Design principle</strong>System intentionally stays silent. Teacher records short video or photos when ready — under 1 min, no special app.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-gray">
+          <div class="node-title">Lesson-end prompt fires</div>
+          <div class="node-sub">Make.com detects lesson end · "Upload now?" via WhatsApp</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Make.com S2</strong>Triggered at lesson end time from timetable. Sends WhatsApp message prompting upload.</div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="decision-wrap">
+          <svg width="220" height="70" viewBox="0 0 220 70" style="overflow:visible;">
+            <polygon points="110,4 216,35 110,66 4,35" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.5"/>
+            <text x="110" y="31" text-anchor="middle" font-family="'DM Sans'" font-size="11" font-weight="500" fill="#1D4ED8">Upload now</text>
+            <text x="110" y="47" text-anchor="middle" font-family="'DM Sans'" font-size="11" font-weight="500" fill="#1D4ED8">or remind me later?</text>
+          </svg>
+          <div class="branches">
+            <div class="branch">
+              <div class="branch-label skip">Later →</div>
+              <div class="connector"></div>
+              <div class="node node-gray" style="max-width:200px;">
+                <div class="node-title">+30 min reminder sent</div>
+                <div class="node-sub">One follow-up only. Decline again → no more prompts today.</div>
+              </div>
+            </div>
+            <div class="branch">
+              <div class="branch-label yes">Upload now →</div>
+              <div class="connector connector-green"></div>
+              <div class="node node-purple" style="max-width:200px;">
+                <div class="node-title">Teacher sends media to WhatsApp</div>
+                <div class="node-sub">Photo or short video · sent directly</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Decision</strong>If later: one 30-min follow-up. Decline again: loop ends for today. No further chasing.</div>
+    </div>
+
+    <div class="phase-header" style="margin-top:28px;">
+      <span class="phase-label">Phase 3 — Processing &amp; logging</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">Make.com identifies teacher by phone</div>
+          <div class="node-sub">doGet?phone=+5511... · Apps Script matches B10 in group_profile tabs</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Phone lookup</strong>Teacher identified by WhatsApp number — no login. Apps Script scans all group_profile_* tabs for a match in cell B10.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-purple">
+          <div class="node-title">Teacher confirms child + lesson stage</div>
+          <div class="node-sub">2 button taps · which child? · which lesson stage?</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Teacher-facing</strong>Two interactions total. Button labels drawn from student list in group profile — teacher never types a name.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-purple">
+          <div class="node-title">Optional: voice note or short text</div>
+          <div class="node-sub">Anything worth remembering · teacher can skip</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Teacher-facing</strong>If audio: transcribed via Whisper, stored as teacher_notes. Used as context in Level 2 DIE reflection.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">Make.com downloads, renames, uploads to Drive</div>
+          <div class="node-sub">WhatsApp URL expires ~5 min · renamed Ang_CT_0704.mp4 · evidence folder</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>File naming</strong>Format: student_id_lessonstagecode_ddmm.ext. Lesson stage codes (CT, FT, ST etc.) defined per teacher in their group profile.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="as-group">
+          <div class="as-header">Apps Script — 4 sequential operations on doPost</div>
+          <div class="as-step"><div class="as-num">01</div><div><div class="as-title">Appends row to learning_log</div><div class="as-sub">DIE columns G,I,J,K,L left blank. One row per capture.</div></div></div>
+          <div class="as-step"><div class="as-num">02</div><div><div class="as-title">Writes U to activity_tracker</div><div class="as-sub">U = upload. Flags if 3+ consecutive school days show zero activity.</div></div></div>
+          <div class="as-step"><div class="as-num">03</div><div><div class="as-title">Increments observation count</div><div class="as-sub">Student × lesson stage matrix. Cell darkens with each entry.</div></div></div>
+          <div class="as-step"><div class="as-num">04</div><div><div class="as-title">Checks and awards badges</div><div class="as-sub">e.g. 1st Upload, Full Coverage, 5-Day Streak.</div></div></div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Apps Script</strong>All four operations on a single doPost call. Each scoped by teacher_id — no operation touches another teacher's data.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-purple">
+          <div class="node-title">Teacher gets confirmation + badges</div>
+          <div class="node-sub">"Tagged and added to your Learning Log." · badges included if earned</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Teacher-facing</strong>Reward signal for this capture. Badge notifications included inline. Loop ends here for L1-only teachers — resumes Phase 1 next day.</div>
+    </div>
+
+    <div style="height:16px;"></div>
+    <div class="merge-note">↓ loop repeats from Phase 1 the following school day</div>
+    <div class="continue-badge">L2 teachers also receive a GPT link in the confirmation — see the Level 2 tab</div>
+
+  </div>
+  <div class="footer"><span>The Collective · MVP v2 · Internal</span><span>Level 1 · Daily Loop</span></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     TAB 2 — LEVEL 2
+════════════════════════════════════════════════ -->
+<div id="tab-level2" class="page">
+  <div class="header">
+    <div class="eyebrow">The Collective · MVP v2 · DIE Reflection</div>
+    <h2>Level 2 — <em>DIE reflection via Custom GPT</em></h2>
+    <div class="subtitle">Custom GPT → Apps Script → learning_log · report_summaries · activity_tracker</div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-title">Key —</span>
+    <div class="legend-item"><div class="leg-dot leg-teal"></div> System / API</div>
+    <div class="legend-item"><div class="leg-dot leg-purple"></div> Teacher-facing</div>
+    <div class="legend-item"><div class="leg-dot leg-amber"></div> GPT-guided</div>
+    <div class="legend-item"><div class="leg-dot leg-green"></div> Outcome</div>
+    <div class="legend-item"><div class="leg-diamond"></div> Decision</div>
+  </div>
+
+  <div class="flow">
+
+    <div class="phase-header">
+      <span class="phase-label">Unlock condition</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="gate">
+          <div class="gate-label">Level 2 Ready badge required</div>
+          <div class="gate-text">≥ 20 uploads · ≥ 5 DIE reflections · full coverage achieved</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Earned unlock</strong>Level 2 is not a cohort assignment. The GPT link only appears in the confirmation once the teacher has earned the Level 2 Ready badge. L1-only teachers never see this flow.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="phase-header">
+      <span class="phase-label">Phase 4 — DIE reflection via Custom GPT</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-purple">
+          <div class="node-title">Teacher opens Custom GPT link</div>
+          <div class="node-sub">Link in L1 confirmation message · opens on phone or desktop</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Entry point</strong>The GPT link is included in the WhatsApp confirmation after a Level 2 teacher uploads. Teacher opens it when ready — not time-pressured.</div>
+    </div>
+
+    <div class="connector connector-amber"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-amber">
+          <div class="node-title">GPT asks teacher to identify</div>
+          <div class="node-sub">teacher_id · date of observation · student_id</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>GPT</strong>Three pieces of information collected conversationally before any API calls are made.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">API: load group profile</div>
+          <div class="node-sub">doGet?teacher_id=GioPeg · returns students, lesson stages, LO codes, rubric, calibration notes</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Apps Script</strong>GPT now has full pedagogical context — rubric descriptors, exposure phase, calibration notes. All read dynamically from group_profile tab.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">API: fetch existing L1 row</div>
+          <div class="node-sub">doGet?teacher_id=X&amp;student_id=Ang&amp;date=07/04/2026 · returns lesson stage, media link, teacher_notes, prior evaluations</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Apps Script</strong>Returns the L1 row from upload plus all previous evaluations for this student — GPT has longitudinal context.</div>
+    </div>
+
+    <div class="connector connector-amber"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-amber">
+          <div class="node-title">GPT presents summary and confirms</div>
+          <div class="node-sub">Lesson stage · teacher_notes · prior observations · asks to proceed</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>GPT</strong>Teacher reads context recap and confirms before reflection begins. Can correct if anything is wrong.</div>
+    </div>
+
+    <div class="connector connector-amber"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="die-group">
+          <div class="die-header">DIE reflection — three guided stages</div>
+          <div class="die-step"><div class="die-letter">D</div><div><div class="die-title">Describe</div><div class="die-sub">GPT guides teacher to produce an objective, factual description. One question at a time. Coaches away from interpretation.</div></div></div>
+          <div class="die-step"><div class="die-letter">I</div><div><div class="die-title">Interpret</div><div class="die-sub">GPT guides a tentative developmental interpretation. References exposure phase and calibration notes silently. Suggests 2–3 relevant LO codes.</div></div></div>
+          <div class="die-step"><div class="die-letter">E</div><div><div class="die-title">Evaluate</div><div class="die-sub">For each LO code, GPT guides teacher to assign level 1–5 with a rationale, using rubric descriptors from group profile.</div></div></div>
+        </div>
+      </div>
+      <div class="annotation amber-left"><strong>GPT-guided</strong>Conversation is structured but not scripted. GPT adapts based on what the teacher describes. Rubric descriptors referenced silently — teacher never sees raw spreadsheet data.</div>
+    </div>
+
+    <div class="connector connector-amber"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-amber">
+          <div class="node-title">GPT calculates score + presents for review</div>
+          <div class="node-sub">Average of LO scores · full reflection shown to teacher · Approve or request changes</div>
+        </div>
+      </div>
+      <div class="annotation amber-left"><strong>GPT</strong>Teacher has full editorial control. GPT revises any section on request. Nothing is written to the sheet until the teacher explicitly approves.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">GPT calls doPost — L2 payload</div>
+          <div class="node-sub">teacher_id · student_id · date · lesson_stage · LO_codes · describe · interpret · evaluate · assessment</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Payload</strong>DIE fields only. The 4-field match (teacher_id + student_id + date + lesson_stage) finds the existing L1 row. No new row is created.</div>
+    </div>
+
+    <div class="phase-header" style="margin-top:28px;">
+      <span class="phase-label">Phase 5 — Level 2 logging</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="as-group">
+          <div class="as-header">Apps Script — 6 sequential operations on doPost</div>
+          <div class="as-step"><div class="as-num">01</div><div><div class="as-title">Fills DIE columns in L1 row</div><div class="as-sub">Finds row by 4-field match. Fills G (LO_code), I (describe), J (interpret), K (evaluate), L (assessment).</div></div></div>
+          <div class="as-step"><div class="as-num">02</div><div><div class="as-title">Upgrades activity_tracker: U → D</div><div class="as-sub">D = full DIE completed. Replaces U for same date — never writes both.</div></div></div>
+          <div class="as-step"><div class="as-num">03</div><div><div class="as-title">Stacks evaluation in report_summaries</div><div class="as-sub">Appends [dd/mm] Level X — justification to student's LO cell. Chronological stack.</div></div></div>
+          <div class="as-step"><div class="as-num">04</div><div><div class="as-title">Updates Student Assessment</div><div class="as-sub">Adds date + score entry. Checks stagnation — flags if last 3 scores show no improvement.</div></div></div>
+          <div class="as-step"><div class="as-num">05</div><div><div class="as-title">Checks and awards badges</div><div class="as-sub">Includes Level 2 Ready check.</div></div></div>
+          <div class="as-step"><div class="as-num">06</div><div><div class="as-title">Returns response</div><div class="as-sub">Status · observation count · badges · stagnation flag · top 3 coverage gaps (calculated live — not stored).</div></div></div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Apps Script</strong>Coverage gaps calculated on demand from learning_log — never written to the sheet. Returned in the response payload for the GPT to relay to the teacher.</div>
+    </div>
+
+    <div class="connector connector-amber"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-amber">
+          <div class="node-title">GPT relays response in plain language</div>
+          <div class="node-sub">Badges earned · next suggested students · session ends</div>
+        </div>
+      </div>
+      <div class="annotation amber-left"><strong>GPT</strong>Teacher hears what was logged, badges earned, and which children to prioritise tomorrow. Session closes.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-outcome">
+          <div class="node-title">L1 row complete · report_summaries updated</div>
+          <div class="node-sub">Evidence + pedagogical analysis linked · end-of-semester report data accumulates</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Outcome</strong>Each completed DIE reflection adds one evidence-linked evaluation to the student's record. When semester ends, report_summaries is ready to generate the student report automatically.</div>
+    </div>
+
+    <div style="height:16px;"></div>
+    <div class="merge-note">↓ loop repeats from Phase 1 the following school day</div>
+
+  </div>
+  <div class="footer"><span>The Collective · MVP v2 · Internal</span><span>Level 2 · DIE Reflection</span></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     TAB 3 — WEEKLY WRAP
+════════════════════════════════════════════════ -->
+<div id="tab-weekly" class="page">
+  <div class="header">
+    <div class="eyebrow">The Collective · MVP v2 · Weekly Rhythm</div>
+    <h2>Weekly wrap — <em>Friday summary &amp; montage trigger</em></h2>
+    <div class="subtitle">Make.com · learning_log · Creatomate · WhatsApp → teacher · coordinator · families</div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-title">Key —</span>
+    <div class="legend-item"><div class="leg-dot leg-teal"></div> System / API</div>
+    <div class="legend-item"><div class="leg-dot leg-purple"></div> Teacher-facing</div>
+    <div class="legend-item"><div class="leg-dot leg-amber"></div> Coordinator-facing</div>
+    <div class="legend-item"><div class="leg-dot leg-family"></div> Family-facing</div>
+    <div class="legend-item"><div class="leg-dot leg-green"></div> Outcome</div>
+    <div class="legend-item"><div class="leg-diamond"></div> Decision</div>
+  </div>
+
+  <div class="flow">
+
+    <div class="phase-header">
+      <span class="phase-label">Friday trigger — 16:00 BRT</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-gray">
+          <div class="node-title">Make.com fires Scenario S4 at 16:00 BRT every Friday</div>
+          <div class="node-sub">Queries learning_log for each teacher's entries from the current week</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Trigger</strong>Scheduled scenario — not teacher-initiated. Runs for every active teacher in the pilot regardless of upload count.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">Counts documented moments per student</div>
+          <div class="node-sub">Checks which students have reached the 3-observation threshold · calculates weekly totals</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Two outputs</strong>(1) Weekly summary figures for the wrap card. (2) List of students who have hit ≥ 3 observations — these trigger montage generation.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">Generates weekly summary card via Creatomate</div>
+          <div class="node-sub">Documented moments · children observed · lesson stages covered · video thumbnails · reflection excerpts</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Creatomate</strong>Branded template populated with that teacher's weekly data. Rendered as a visual card ready for WhatsApp delivery.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-purple">
+          <div class="node-title">Weekly wrap delivered to teacher via WhatsApp</div>
+          <div class="node-sub">Summary card + learning_log link for coordinator review</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Teacher-facing</strong>The teacher's reward signal for the week. Shows what they built in one glance. The learning_log link gives the coordinator visibility without a separate notification.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="phase-header">
+      <span class="phase-label">Montage unlock check — per student</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="gate">
+          <div class="gate-label">Unlock condition — per child</div>
+          <div class="gate-text">Each child has ≥ 3 documented moments in the learning_log</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Per-student gate</strong>Checked individually per child — not for the whole class. A montage can be triggered for one student while others are still accumulating observations.</div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="decision-wrap">
+          <svg width="220" height="70" viewBox="0 0 220 70" style="overflow:visible;">
+            <polygon points="110,4 216,35 110,66 4,35" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.5"/>
+            <text x="110" y="31" text-anchor="middle" font-family="'DM Sans'" font-size="11" font-weight="500" fill="#1D4ED8">Any student at</text>
+            <text x="110" y="47" text-anchor="middle" font-family="'DM Sans'" font-size="11" font-weight="500" fill="#1D4ED8">≥ 3 observations?</text>
+          </svg>
+          <div class="branches">
+            <div class="branch">
+              <div class="branch-label no">Not yet →</div>
+              <div class="connector"></div>
+              <div class="node node-gray" style="max-width:200px;">
+                <div class="node-title">No montage this week</div>
+                <div class="node-sub">Wrap card still delivered. Loop repeats next Friday.</div>
+              </div>
+            </div>
+            <div class="branch">
+              <div class="branch-label yes">Threshold reached →</div>
+              <div class="connector connector-green"></div>
+              <div class="node node-teal" style="max-width:200px;">
+                <div class="node-title">Montage generation triggered</div>
+                <div class="node-sub">For each qualifying student · see Montage tab for full flow</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Decision</strong>Evaluated per student. Multiple montages can be triggered in the same Friday run. Full montage approval and delivery flow is in the Family Montage tab.</div>
+    </div>
+
+    <div style="height:16px;"></div>
+    <div class="merge-note">↓ loop repeats from Phase 1 the following Monday</div>
+
+  </div>
+  <div class="footer"><span>The Collective · MVP v2 · Internal</span><span>Weekly Wrap · Friday</span></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     TAB 4 — FAMILY MONTAGE
+════════════════════════════════════════════════ -->
+<div id="tab-montage" class="page">
+  <div class="header">
+    <div class="eyebrow">The Collective · MVP v2 · Montage Flow</div>
+    <h2>Family montage — <em>teacher approval to family delivery</em></h2>
+    <div class="subtitle">Creatomate · teacher preview · coordinator release · family WhatsApp delivery</div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-title">Key —</span>
+    <div class="legend-item"><div class="leg-dot leg-teal"></div> System / API</div>
+    <div class="legend-item"><div class="leg-dot leg-purple"></div> Teacher-facing</div>
+    <div class="legend-item"><div class="leg-dot leg-amber"></div> Coordinator-facing</div>
+    <div class="legend-item"><div class="leg-dot leg-family"></div> Family-facing</div>
+    <div class="legend-item"><div class="leg-dot leg-green"></div> Outcome</div>
+    <div class="legend-item"><div class="leg-diamond"></div> Decision</div>
+  </div>
+
+  <div class="flow">
+
+    <div class="phase-header">
+      <span class="phase-label">Assembly</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">Make.com triggers Creatomate</div>
+          <div class="node-sub">student_id · learning_log rows · file links · reflection excerpts · provider brand config</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Make.com → Creatomate</strong>Triggered at Friday wrap or mid-week threshold. Media files pulled from Google Drive via file links in the learning_log.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="as-group">
+          <div class="as-header">Montage contents — assembled by Creatomate</div>
+          <div class="as-step"><div class="as-num">·</div><div><div class="as-title">Video clips</div><div class="as-sub">Short segments from the evidence folder, sequenced by lesson stage</div></div></div>
+          <div class="as-step"><div class="as-num">·</div><div><div class="as-title">Photo thumbnails</div><div class="as-sub">Still images captured during observations</div></div></div>
+          <div class="as-step"><div class="as-num">·</div><div><div class="as-title">Narrative summary</div><div class="as-sub">Teacher reflection translated into family-facing Portuguese — no jargon</div></div></div>
+          <div class="as-step"><div class="as-num">·</div><div><div class="as-title">Provider branding</div><div class="as-sub">Program logo, colours, and tone applied via branded template</div></div></div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Creatomate</strong>Output is a single WhatsApp-ready video or rich media card. Pedagogical language translated into accessible family language. No rubric scores exposed.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="phase-header">
+      <span class="phase-label">Step 1 — Teacher preview and approval</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-purple">
+          <div class="node-title">Teacher receives montage preview via WhatsApp</div>
+          <div class="node-sub">"Here's the montage for Ang — Preview / Edit / Skip"</div>
+        </div>
+      </div>
+      <div class="annotation purple-left"><strong>Teacher-facing</strong>Teacher sees exactly what the family will receive before it goes anywhere. Three options: Preview, Edit, Skip.</div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="decision-wrap">
+          <svg width="220" height="70" viewBox="0 0 220 70" style="overflow:visible;">
+            <polygon points="110,4 216,35 110,66 4,35" fill="#F5F3FF" stroke="#DDD6FE" stroke-width="1.5"/>
+            <text x="110" y="31" text-anchor="middle" font-family="'DM Sans'" font-size="11" font-weight="500" fill="#5B21B6">Approve, edit,</text>
+            <text x="110" y="47" text-anchor="middle" font-family="'DM Sans'" font-size="11" font-weight="500" fill="#5B21B6">or skip?</text>
+          </svg>
+          <div class="branches">
+            <div class="branch">
+              <div class="branch-label edit">Edit →</div>
+              <div class="connector connector-amber"></div>
+              <div class="node node-amber" style="max-width:200px;">
+                <div class="node-title">Teacher flags a change</div>
+                <div class="node-sub">Voice note or text. Handled outside the system. Re-rendered if needed.</div>
+              </div>
+            </div>
+            <div class="branch">
+              <div class="branch-label yes">Approve →</div>
+              <div class="connector connector-green"></div>
+              <div class="node node-teal" style="max-width:200px;">
+                <div class="node-title">Enters coordinator queue</div>
+                <div class="node-sub">Approved montage awaits coordinator release</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="annotation purple-left"><strong>Decision</strong>Teacher has full veto. Nothing reaches a family without the teacher first seeing it. Skip: no action. Edit: support ticket, human reviews and re-renders.</div>
+    </div>
+
+    <div class="connector connector-amber"></div>
+
+    <div class="phase-header">
+      <span class="phase-label">Step 2 — Coordinator review and release</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-amber">
+          <div class="node-title">Coordinator notified of approved montage</div>
+          <div class="node-sub">Preview link + student name + teacher name · "Ready to release to family?" · Release / Hold</div>
+        </div>
+      </div>
+      <div class="annotation amber-left"><strong>Final authority</strong>The coordinator is the final release gate. They may hold if timing is wrong, a parent situation is sensitive, or the school week was unusual. Hold doesn't delete — it queues for later release.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="phase-header">
+      <span class="phase-label">Step 3 — Family delivery</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-outcome">
+          <div class="node-title">Branded montage delivered to family via WhatsApp</div>
+          <div class="node-sub">Individual message per child · no app · no login · family sees their child learning</div>
+        </div>
+      </div>
+      <div class="annotation family-left"><strong>Buyer value moment</strong>This is the deliverable the provider paid for. A family opens WhatsApp and sees their child learning — before any showcase event.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="outcomes-grid" style="max-width:460px; grid-template-columns:1fr 1fr 1fr;">
+          <div class="node node-family" style="max-width:100%;padding:10px 12px;">
+            <div class="node-title" style="font-size:11px;">Family</div>
+            <div class="node-sub">Sees child's learning</div>
+          </div>
+          <div class="node node-amber" style="max-width:100%;padding:10px 12px;">
+            <div class="node-title" style="font-size:11px;">Coordinator</div>
+            <div class="node-sub">Gets a copy of every montage sent</div>
+          </div>
+          <div class="node node-purple" style="max-width:100%;padding:10px 12px;">
+            <div class="node-title" style="font-size:11px;">Teacher</div>
+            <div class="node-sub">Confirmation it was delivered</div>
+          </div>
+        </div>
+      </div>
+      <div class="annotation family-left"><strong>Three recipients</strong>Family, coordinator, and teacher all receive something at delivery — one event serves three audiences simultaneously.</div>
+    </div>
+
+    <div style="height:16px;"></div>
+    <div class="merge-note">↓ observations continue · next montage triggered at next threshold</div>
+
+  </div>
+  <div class="footer"><span>The Collective · MVP v2 · Internal</span><span>Family Montage · Approval &amp; Delivery</span></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     TAB 5 — DORMANT
+════════════════════════════════════════════════ -->
+<div id="tab-dormant" class="page">
+  <div class="header">
+    <div class="eyebrow">The Collective · MVP v2 · Exception Path</div>
+    <h2>Dormant teacher — <em>no upload for 1 then 2 days</em></h2>
+    <div class="subtitle">activity_tracker · Make.com · teacher · support ticket · human follow-up · no coordinator involvement</div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-title">Key —</span>
+    <div class="legend-item"><div class="leg-dot leg-teal"></div> System / API</div>
+    <div class="legend-item"><div class="leg-dot leg-purple"></div> Teacher-facing</div>
+    <div class="legend-item"><div class="leg-dot leg-red"></div> Exception / support</div>
+    <div class="legend-item"><div class="leg-dot leg-gray"></div> State</div>
+    <div class="legend-item"><div class="leg-dot leg-green"></div> Resolution</div>
+    <div class="legend-item"><div class="leg-diamond"></div> Decision</div>
+  </div>
+
+  <div class="flow">
+
+    <div class="phase-header">
+      <span class="phase-label">Day 1 — Tuesday · morning prompt ignored</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-gray">
+          <div class="node-title">Normal morning prompt fires at 08:45</div>
+          <div class="node-sub">Suggested child + lesson stage · "Yes, please" / "Not today" buttons · teacher does not respond</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Normal morning prompt</strong>System doesn't know yet this will be a silent day. Usual suggestion prompt fires 15 min before class. Teacher does not respond to either button.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">Apps Script checks activity_tracker at 17:00</div>
+          <div class="node-sub">Scenario S3 · 1 consecutive silent day · below threshold · no escalation</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Daily check</strong>One missed day is normal variation. The system notes it and takes no escalation action.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-purple">
+          <div class="node-title">System sends soft end-of-day message</div>
+          <div class="node-sub">"No worries about today. Teaching is full-on — we get it. Try again tomorrow." · no buttons · no ask</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Soft message — day 1 only</strong>Warm, no pressure. Fires once after a single silent day. No buttons. Loop continues tomorrow.</div>
+    </div>
+
+    <div class="connector connector-red"></div>
+
+    <div class="phase-header">
+      <span class="phase-label">Day 2 — Wednesday · system tries again</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">Apps Script detects 2 consecutive silent days</div>
+          <div class="node-sub">activity_tracker shows no entry Tuesday or Monday · dormant threshold reached · modified prompt queued</div>
+        </div>
+      </div>
+      <div class="annotation red-left"><strong>Threshold reached</strong>2 consecutive school days with no entry triggers a modified morning prompt. The coordinator is not involved — this stays entirely between the system and the teacher.</div>
+    </div>
+
+    <div class="connector connector-red"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-purple">
+          <div class="node-title">Modified morning prompt delivered to teacher</div>
+          <div class="node-sub">"I noticed there was no documentation yesterday. If something is making this difficult, I'm here. Shall we try again today?" · "Yes, let's go" / "Send a message"</div>
+        </div>
+      </div>
+      <div class="annotation red-left"><strong>Modified prompt — day 2</strong>Replaces the usual morning prompt. Acknowledges the gap without blame. Two clear paths: resume the normal loop, or open a support channel.</div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="decision-wrap">
+          <svg width="220" height="70" viewBox="0 0 220 70" style="overflow:visible;">
+            <polygon points="110,4 216,35 110,66 4,35" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.5"/>
+            <text x="110" y="31" text-anchor="middle" font-family="'DM Sans'" font-size="11" font-weight="500" fill="#1D4ED8">Teacher taps</text>
+            <text x="110" y="47" text-anchor="middle" font-family="'DM Sans'" font-size="11" font-weight="500" fill="#1D4ED8">which button?</text>
+          </svg>
+          <div class="branches">
+            <div class="branch">
+              <div class="branch-label yes">Yes, let's go →</div>
+              <div class="connector connector-green"></div>
+              <div class="node node-outcome" style="max-width:200px;">
+                <div class="node-title">Normal loop resumes</div>
+                <div class="node-sub">Returns to standard suggestion flow. Streak counter resets.</div>
+              </div>
+            </div>
+            <div class="branch">
+              <div class="branch-label msg">Send a message →</div>
+              <div class="connector connector-purple"></div>
+              <div class="node node-purple" style="max-width:200px;">
+                <div class="node-title">Support channel opens</div>
+                <div class="node-sub">Teacher invited to send voice note or text · see Path B below</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Two paths</strong>"Yes, let's go" returns immediately to the standard daily loop. "Send a message" opens freeform support — Path B shown below.</div>
+    </div>
+
+    <div class="connector connector-purple"></div>
+
+    <div class="section-rule"><span class="section-rule-label">Path B — teacher sends a message</span></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-purple">
+          <div class="node-title">System opens support channel</div>
+          <div class="node-sub">"You can send a voice note or a message — whatever's easier. We'll read it and follow up."</div>
+        </div>
+      </div>
+      <div class="annotation purple-left"><strong>Support channel</strong>No form, no ticket number, no category selection. The teacher just sends a message. Could be a practical blocker (phone issue, no WiFi) or motivational.</div>
+    </div>
+
+    <div class="connector connector-purple"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-purple">
+          <div class="node-title">Teacher sends voice note or free text</div>
+          <div class="node-sub">WhatsApp audio or message · received via webhook · teacher's choice of format</div>
+        </div>
+      </div>
+      <div class="annotation purple-left"><strong>Teacher's message</strong>Make.com receives via WhatsApp webhook. Logs as a support message and creates a ticket with full context — teacher_id, timestamp, silent streak, last upload date.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">Make.com creates support ticket</div>
+          <div class="node-sub">Logs teacher_id · timestamp · message content · consecutive silent days · last upload date</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Make.com</strong>Ticket contains enough context for the human responder — who the teacher is, how long they've been silent, what they said. No one needs to dig for background.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">System sends single acknowledgement message</div>
+          <div class="node-sub">"We've received your message. Someone from our team will follow up. Take the pressure off today."</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>System stops here</strong>One acknowledgement message only. No further automated messages are sent. All follow-up is human-led. Repeated automated nudges erode trust.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-red">
+          <div class="node-title">Human follow-up outside the system</div>
+          <div class="node-sub">Team reads message · identifies blocker · responds directly · removes friction or adjusts expectations</div>
+        </div>
+      </div>
+      <div class="annotation red-left"><strong>Outside the system</strong>A practical blocker (device issue, connectivity, time pressure) needs a different response than a motivational one. Only a human can tell the difference and respond appropriately.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-outcome">
+          <div class="node-title">Teacher resumes — streak counter resets</div>
+          <div class="node-sub">Next upload clears all dormant flags · daily loop resumes from Phase 1 next morning</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Reset</strong>A single upload clears the dormant state entirely. The system doesn't hold the gap against the teacher — fresh start from the next activity entry.</div>
+    </div>
+
+    <div style="height:16px;"></div>
+    <div class="merge-note">↓ returns to Phase 1 — daily loop resumes normally</div>
+    <div class="continue-badge">The coordinator is never notified in this flow · entirely between the system, the teacher, and the support team</div>
+
+  </div>
+  <div class="footer"><span>The Collective · MVP v2 · Internal</span><span>Exception Path · Dormant Teacher</span></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     TAB 6 — REPORTS
+════════════════════════════════════════════════ -->
+<div id="tab-reports" class="page">
+  <div class="header">
+    <div class="eyebrow">The Collective · MVP v2 · End-of-Semester</div>
+    <h2>Student reports — <em>from log to family-ready PDF</em></h2>
+    <div class="subtitle">report_summaries · Apps Script · teacher review · coordinator release · family delivery</div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-title">Key —</span>
+    <div class="legend-item"><div class="leg-dot leg-teal"></div> System / API</div>
+    <div class="legend-item"><div class="leg-dot leg-purple"></div> Teacher-facing</div>
+    <div class="legend-item"><div class="leg-dot leg-amber"></div> Coordinator-facing</div>
+    <div class="legend-item"><div class="leg-dot leg-family"></div> Family-facing</div>
+    <div class="legend-item"><div class="leg-dot leg-green"></div> Outcome</div>
+    <div class="legend-item"><div class="leg-diamond"></div> Decision</div>
+  </div>
+
+  <div class="flow">
+
+    <div class="phase-header">
+      <span class="phase-label">What powers the report</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="as-group">
+          <div class="as-header">report_summaries tab — built across the semester</div>
+          <div class="as-step"><div class="as-num">·</div><div><div class="as-title">Per-student, per-LO evaluation stack</div><div class="as-sub">Each DIE reflection appends [dd/mm] Level X — justification to the student's LO cell. Chronological stack across the semester.</div></div></div>
+          <div class="as-step"><div class="as-num">·</div><div><div class="as-title">Assessment score progression</div><div class="as-sub">Date + score entries across the semester. Stagnation flags marked where scores did not improve over 3 consecutive observations.</div></div></div>
+          <div class="as-step"><div class="as-num">·</div><div><div class="as-title">Free-text comment column</div><div class="as-sub">Column R — teacher's narrative summary added at report generation time. Pre-populated from evaluation stack; teacher edits.</div></div></div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Raw material</strong>Every Level 2 DIE reflection contributes one entry to this tab. By end of semester, each student has a chronological evidence record per learning objective — ready to generate automatically.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="phase-header">
+      <span class="phase-label">Report generation trigger</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">System triggers on set end-of-semester date</div>
+          <div class="node-sub">Checks: teacher has completed sufficient reflections · minimum coverage threshold met</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Trigger</strong>Date-based trigger. Apps Script checks coverage before proceeding — a report is only generated if the teacher has built enough data across the semester to make it meaningful.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-teal">
+          <div class="node-title">Apps Script generates draft report per student</div>
+          <div class="node-sub">Reads report_summaries · compiles competency profiles · semester overview narrative · evidence-linked observations · differentiated next steps · all in Portuguese</div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Apps Script</strong>Draft report is auto-generated from accumulated evaluation data. The teacher is not starting from a blank page — they are editing from evidence.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="phase-header">
+      <span class="phase-label">Teacher review</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-purple">
+          <div class="node-title">Teacher receives draft report preview</div>
+          <div class="node-sub">Competency profile · semester overview · evidence-linked observations · next steps · Edit / Approve buttons</div>
+        </div>
+      </div>
+      <div class="annotation purple-left"><strong>Teacher-facing</strong>The teacher's biggest pain point is writing reports from memory on weekends. This replaces that. The draft is already populated — they review and approve rather than write from scratch.</div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="decision-wrap">
+          <svg width="220" height="70" viewBox="0 0 220 70" style="overflow:visible;">
+            <polygon points="110,4 216,35 110,66 4,35" fill="#F5F3FF" stroke="#DDD6FE" stroke-width="1.5"/>
+            <text x="110" y="31" text-anchor="middle" font-family="'DM Sans'" font-size="11" font-weight="500" fill="#5B21B6">Approve draft</text>
+            <text x="110" y="47" text-anchor="middle" font-family="'DM Sans'" font-size="11" font-weight="500" fill="#5B21B6">or edit?</text>
+          </svg>
+          <div class="branches">
+            <div class="branch">
+              <div class="branch-label edit">Edit →</div>
+              <div class="connector connector-purple"></div>
+              <div class="node node-purple" style="max-width:200px;">
+                <div class="node-title">Teacher edits draft</div>
+                <div class="node-sub">Adjusts narrative · changes next steps · resubmits for approval</div>
+              </div>
+            </div>
+            <div class="branch">
+              <div class="branch-label yes">Approve →</div>
+              <div class="connector connector-green"></div>
+              <div class="node node-teal" style="max-width:200px;">
+                <div class="node-title">Report enters coordinator queue</div>
+                <div class="node-sub">Awaits coordinator final review and release</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="annotation purple-left"><strong>Decision</strong>Teacher has full editorial control. Nothing reaches the coordinator or family until the teacher approves. Edits loop back to review.</div>
+    </div>
+
+    <div class="connector connector-amber"></div>
+
+    <div class="phase-header">
+      <span class="phase-label">Coordinator final release</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-amber">
+          <div class="node-title">Coordinator receives approved reports for review</div>
+          <div class="node-sub">All student reports for this teacher's group · Release / Hold per report</div>
+        </div>
+      </div>
+      <div class="annotation amber-left"><strong>Final authority</strong>Coordinator holds final release authority before reports reach families. Can release all at once or hold individual reports. Quality gate at the school level.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="phase-header">
+      <span class="phase-label">Family delivery</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="node node-outcome">
+          <div class="node-title">Student report delivered to family via WhatsApp</div>
+          <div class="node-sub">PDF or rich message · competency profiles · semester narrative · evidence-linked observations · next steps · all in Portuguese</div>
+        </div>
+      </div>
+      <div class="annotation family-left"><strong>Buyer value moment — semester close</strong>Families receive a professional, evidence-based report about their child — written by the teacher, grounded in real documented moments, not written from memory over a weekend.</div>
+    </div>
+
+    <div class="connector connector-green"></div>
+
+    <div class="annotated">
+      <div class="annotated-node-col">
+        <div class="outcomes-grid" style="max-width:460px; grid-template-columns:1fr 1fr 1fr;">
+          <div class="node node-family" style="max-width:100%;padding:10px 12px;">
+            <div class="node-title" style="font-size:11px;">Family</div>
+            <div class="node-sub">Evidence-based report on their child</div>
+          </div>
+          <div class="node node-purple" style="max-width:100%;padding:10px 12px;">
+            <div class="node-title" style="font-size:11px;">Teacher</div>
+            <div class="node-sub">No weekend report-writing from memory</div>
+          </div>
+          <div class="node node-teal" style="max-width:100%;padding:10px 12px;">
+            <div class="node-title" style="font-size:11px;">Provider</div>
+            <div class="node-sub">Proof of learning outcomes at scale</div>
+          </div>
+        </div>
+      </div>
+      <div class="annotation"><strong>Three outcomes</strong>One automated report generation cycle delivers value simultaneously to the family (evidence), the teacher (time saved), and the provider (proof of outcomes at scale).</div>
+    </div>
+
+    <div style="height:16px;"></div>
+    <div class="merge-note">↓ new semester begins · documentation loop restarts from Phase 1</div>
+    <div class="continue-badge">Report generation requires Level 2 data — report_summaries is only populated by completed DIE reflections</div>
+
+  </div>
+  <div class="footer"><span>The Collective · MVP v2 · Internal</span><span>Student Reports · End of Semester</span></div>
+</div>
+
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById('tab-' + id).classList.add('active');
+  var tabs = ['level1','level2','weekly','montage','dormant','reports'];
+  var idx = tabs.indexOf(id);
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
